@@ -1,0 +1,114 @@
+---
+title: "Aula 5 - Exercício 2 (mtcars - Quarto)"
+format:
+  html:
+    toc: true
+    theme: cosmo
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
+if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
+if (!requireNamespace("plotly", quietly = TRUE)) install.packages("plotly")
+if (!requireNamespace("DT", quietly = TRUE)) install.packages("DT")
+
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(DT)
+
+data(mtcars)
+mt <- mtcars
+mt$modelo <- rownames(mtcars)
+rownames(mt) <- NULL
+
+mt$cyl  <- factor(mt$cyl)
+mt$vs   <- factor(mt$vs)
+mt$am   <- factor(mt$am)
+mt$gear <- factor(mt$gear)
+mt$carb <- factor(mt$carb)
+```
+
+# Objetivo
+
+Explorar a base `mtcars` usando **Quarto**, com tabelas e gráficos interativos.
+
+# Visão geral
+
+```{r}
+dim(mt)
+str(mt)
+summary(mt)
+```
+
+# Tabela interativa
+
+```{r}
+DT::datatable(
+  mt,
+  options = list(pageLength = 10, scrollX = TRUE),
+  rownames = FALSE
+)
+```
+
+# Visualizações interativas
+
+## mpg vs wt (eficiência vs peso)
+
+```{r}
+p <- ggplot(mt, aes(x = wt, y = mpg, color = am, text = modelo)) +
+  geom_point(size = 2, alpha = 0.85) +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  labs(title = "mpg vs wt", x = "wt (peso)", y = "mpg (eficiência)", color = "am")
+
+plotly::ggplotly(p, tooltip = c("text", "x", "y", "color"))
+```
+
+## mpg vs hp (eficiência vs potência)
+
+```{r}
+p <- ggplot(mt, aes(x = hp, y = mpg, color = cyl, text = modelo)) +
+  geom_point(size = 2, alpha = 0.85) +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  labs(title = "mpg vs hp", x = "hp (potência)", y = "mpg (eficiência)", color = "cyl")
+
+plotly::ggplotly(p, tooltip = c("text", "x", "y", "color"))
+```
+
+## mpg por transmissão (am)
+
+```{r}
+p <- ggplot(mt, aes(x = am, y = mpg, fill = am)) +
+  geom_boxplot(alpha = 0.75) +
+  theme_minimal() +
+  labs(title = "mpg por am", x = "am", y = "mpg") +
+  theme(legend.position = "none")
+
+plotly::ggplotly(p)
+```
+
+# Correlações (somente numéricas)
+
+```{r}
+mt_num <- mt %>% select(where(is.numeric))
+cor_mat <- cor(mt_num)
+cor_mat
+```
+
+```{r}
+cor_mpg <- sort(cor_mat[, "mpg"], decreasing = TRUE)
+cor_mpg
+```
+
+# Modelo simples (opcional)
+
+```{r}
+modelo <- lm(mpg ~ wt + hp + disp, data = mt)
+summary(modelo)
+```
