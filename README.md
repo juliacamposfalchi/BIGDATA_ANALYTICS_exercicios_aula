@@ -11,4 +11,4 @@ Este repositório contém exercícios e scripts desenvolvidos para fins acadêmi
 ## Observações
 
 - O material aqui disponibilizado tem finalidade **exclusivamente acadêmica**.
-- Todos arquivos de dados utilizados nos exercícios são de conhecimento e bases públicas utilizadas apenas para fins acadêmicos respeitando todas as diretrizes da lei geral de proteção de dados (LGPD).
+- Todos os dados utilizados nos exercícios são provenientes de fontes públicas e foram utilizados exclusivamente para fins acadêmicos, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
